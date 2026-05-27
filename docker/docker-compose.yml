@@ -1,0 +1,46 @@
+services:
+  upstream:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: ["python", "-m", "netlab", "server", "http", "--host", "0.0.0.0", "--port", "8080"]
+    networks: [netlab]
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command:
+      [
+        "python",
+        "-m",
+        "netlab",
+        "proxy",
+        "reverse",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8081",
+        "--upstream-host",
+        "upstream",
+        "--upstream-port",
+        "8080",
+      ]
+    ports:
+      - "18080:8081"
+    depends_on:
+      - upstream
+    networks: [netlab]
+
+  client:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: ["python", "-m", "netlab", "client", "http", "--host", "gateway", "--port", "8081", "--path", "/from-container"]
+    depends_on:
+      - gateway
+    networks: [netlab]
+
+networks:
+  netlab:
+    driver: bridge
