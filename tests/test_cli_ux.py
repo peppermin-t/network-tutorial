@@ -16,13 +16,31 @@ class CliUxTest(unittest.TestCase):
         self.assertIn("tshark=", output.getvalue())
         self.assertIn("docker=", output.getvalue())
 
+    def test_path_tutorial_outputs_full_course(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            code = main(["path", "tutorial"])
+
+        self.assertEqual(code, 0)
+        self.assertIn("Week00", output.getvalue())
+        self.assertIn("Week12", output.getvalue())
+
     def test_path_ai_outputs_fast_track(self) -> None:
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             code = main(["path", "ai"])
 
         self.assertEqual(code, 0)
-        self.assertIn("week10-capstone", output.getvalue())
+        self.assertIn("Week12", output.getvalue())
+
+    def test_path_design_outputs_design_path(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            code = main(["path", "design"])
+
+        self.assertEqual(code, 0)
+        self.assertIn("Week01", output.getvalue())
+        self.assertIn("Week12", output.getvalue())
 
     def test_path_vpn_outputs_path(self) -> None:
         output = io.StringIO()
@@ -30,7 +48,7 @@ class CliUxTest(unittest.TestCase):
             code = main(["path", "vpn"])
 
         self.assertEqual(code, 0)
-        self.assertIn("week11-vpn-mental-model", output.getvalue())
+        self.assertIn("Week11", output.getvalue())
 
     def test_concept_tcp_outputs_summary(self) -> None:
         output = io.StringIO()

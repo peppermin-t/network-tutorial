@@ -60,13 +60,13 @@ python -m netlab capture status
 Generate a capture command:
 
 ```powershell
-python -m netlab capture command --interface "Adapter for loopback traffic capture" --output captures/week05-http.pcapng --filter "tcp port 8080" --packets 20
+python -m netlab capture command --interface "Adapter for loopback traffic capture" --output captures/week06-http.pcapng --filter "tcp port 8080" --packets 20
 ```
 
 Read selected fields from an existing capture:
 
 ```powershell
-python -m netlab capture read captures/week05-http.pcapng --display-filter http --field frame.time_relative --field ip.src --field tcp.srcport --field http.request.method
+python -m netlab capture read captures/week06-http.pcapng --display-filter http --field frame.time_relative --field ip.src --field tcp.srcport --field http.request.method
 ```
 
 ## Windows Notes

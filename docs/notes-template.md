@@ -1,23 +1,40 @@
-# Lab Notes
+# Notes Template
 
-## Commands I ran
+Use one file per week. Keep it short enough that you will actually update it.
 
-## Expected result
+## Goal
 
-## Actual result
+## Commands
+```text
 
-## Code path
+```
 
-## Packet observation
+## Observations
+- Output:
+- Logs:
+- HTTP status/header/body:
+- Metrics:
+- Packet capture:
+- Route/DNS/interface state:
 
-## Logs / trace / metrics
+## Questions
+1.
+2.
+3.
 
-## Failure injected
+## Layered Explanation
+- DNS:
+- Route:
+- Socket/TCP/UDP:
+- TLS:
+- HTTP/RPC:
+- Proxy/gateway:
+- Capacity:
+- App:
 
-## Layer classification
+## Work Mapping
+Where this would appear in real engineering work:
 
-## AI engineering mapping
+## Remaining Confusion
 
-## One thing I misunderstood before
-
-## One thing to verify again
+For Week12, use `docs/network-design-template.md` in addition to this template.

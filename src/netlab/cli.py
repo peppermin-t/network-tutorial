@@ -111,7 +111,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     path = subparsers.add_parser("path", help="Print recommended learning paths")
     path_sub = path.add_subparsers(dest="kind", required=True)
+    path_sub.add_parser("tutorial", help="Complete Week00-Week12 tutorial path")
     path_sub.add_parser("ai", help="AI/LLM engineering fast track")
+    path_sub.add_parser("design", help="Small network design path")
     path_sub.add_parser("vpn", help="VPN mental model path")
 
     concept = subparsers.add_parser("concept", help="Print a short concept summary")
@@ -278,25 +280,56 @@ def _doctor() -> int:
 
 
 def _path(args: argparse.Namespace) -> int:
-    if args.kind == "ai":
+    if args.kind == "tutorial":
+        lines = [
+            "Complete tutorial path:",
+            "1. Week00 - Orientation, Layering, and Tools",
+            "2. Week01 - IP Addressing, Subnetting, and Routing",
+            "3. Week02 - Local Network Diagnostics",
+            "4. Week03 - Sockets, TCP/UDP, Host/Port, Connection Lifecycle",
+            "5. Week04 - TCP Framing and Packet Thinking",
+            "6. Week05 - DNS",
+            "7. Week06 - HTTP/1.1 Fundamentals",
+            "8. Week07 - TLS and HTTPS",
+            "9. Week08 - Proxy, Gateway, Timeout, Retry",
+            "10. Week09 - RPC, WebSocket, and Streaming",
+            "11. Week10 - Docker and Container Networking",
+            "12. Week11 - VPN and Remote Access Mental Model",
+            "13. Week12 - Capstone: Network Design + Observable Service Path",
+        ]
+    elif args.kind == "ai":
         lines = [
             "AI/LLM engineering fast track:",
-            "1. week01-sockets: host/port, TCP/UDP, connection lifecycle",
-            "2. week04-dns: name resolution and DNS failure",
-            "3. week05-http: request/response/body/streaming foundation",
-            "4. week06-proxy-timeout-retry: gateway, timeout, retry, failure classification",
-            "5. week09-container-networking: service names, bridge network, port mapping",
-            "6. week10-capstone: client -> gateway -> model-like upstream",
-            "7. optional week11-vpn-mental-model: VPN/routing/DNS extension",
+            "1. Week00: layering and request path vocabulary",
+            "2. Week03: sockets, TCP/UDP, host/port",
+            "3. Week05: DNS and resolver failure",
+            "4. Week06: HTTP request/response foundation",
+            "5. Week08: gateway, timeout, retry, failure classification",
+            "6. Week09: RPC, WebSocket, streaming, first byte latency",
+            "7. Week10: Docker service names, bridge network, port mapping",
+            "8. Week12: client -> gateway -> model-like upstream with traces and metrics",
+        ]
+    elif args.kind == "design":
+        lines = [
+            "Small network design path:",
+            "1. Week00: practical layering and observation tools",
+            "2. Week01: IP, CIDR, gateway, route table, DHCP/static split",
+            "3. Week02: ARP, ICMP, NAT, firewall mental models",
+            "4. Week05: DNS naming and resolver behavior",
+            "5. Week08: gateway boundaries, timeout, retry",
+            "6. Week10: container network boundaries",
+            "7. Week11: VPN route and DNS policy",
+            "8. Week12: topology, subnet plan, ports, paths, observability",
         ]
     elif args.kind == "vpn":
         lines = [
             "VPN mental model path:",
-            "1. week01-sockets: TCP/UDP and connection outcomes",
-            "2. week04-dns: DNS query, TTL, timeout, NXDOMAIN",
-            "3. week07-tls: HTTPS, certificate validation, SNI",
-            "4. week09-container-networking: namespaces and localhost intuition",
-            "5. week11-vpn-mental-model: route table, DNS policy, full/split tunnel",
+            "1. Week01: route table, default route, DNS server",
+            "2. Week02: local reachability, NAT, firewall symptoms",
+            "3. Week05: DNS query, TTL, timeout, NXDOMAIN",
+            "4. Week07: HTTPS, certificate validation, SNI",
+            "5. Week10: namespaces and localhost intuition",
+            "6. Week11: virtual interface, route table, DNS policy, full/split tunnel",
         ]
     else:
         raise AssertionError(args.kind)
@@ -307,25 +340,25 @@ def _path(args: argparse.Namespace) -> int:
 CONCEPT_SUMMARIES = {
     "tcp": [
         "TCP is a reliable ordered byte stream between two endpoints.",
-        "Observe handshake, payload, ACKs, and teardown in Week01.",
+        "Observe handshake, payload, ACKs, and teardown in Week03.",
         "TCP does not preserve application message boundaries.",
         "AI mapping: slow model response after connect is usually above TCP.",
     ],
     "dns": [
         "DNS maps names to records before a connection can be made.",
-        "Observe query type, answer, TTL, timeout, and NXDOMAIN in Week04.",
+        "Observe query type, answer, TTL, timeout, and NXDOMAIN in Week05.",
         "DNS success does not prove TCP/TLS/HTTP success.",
         "AI mapping: internal model endpoints often fail first at DNS policy.",
     ],
     "http-streaming": [
         "HTTP streaming sends the response body progressively.",
-        "Observe chunked responses and first byte vs total latency in Week10.",
+        "Observe chunked responses and first byte vs total latency in Week09 and Week12.",
         "Streaming can be broken by proxy buffering.",
         "AI mapping: token streaming quality depends on prompt first chunk forwarding.",
     ],
     "proxy-buffering": [
         "Proxy buffering means a gateway reads upstream data before forwarding it.",
-        "Observe direct `/stream` versus gateway `/stream` in Week10.",
+        "Observe direct `/stream` versus gateway `/stream` in Week12.",
         "If chunks arrive all at once, streaming has likely been buffered.",
         "AI mapping: model server streams correctly but users still see delayed output.",
     ],
@@ -337,7 +370,7 @@ CONCEPT_SUMMARIES = {
     ],
     "backpressure": [
         "Backpressure rejects or slows callers when capacity is exhausted.",
-        "Observe HTTP 429 and p50/p95 latency in Week10.",
+        "Observe HTTP 429 and p50/p95 latency in Week12.",
         "429 is a capacity signal, not a TCP failure.",
         "AI mapping: GPU workers and queues need explicit overload behavior.",
     ],
