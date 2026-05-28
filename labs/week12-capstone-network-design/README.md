@@ -31,6 +31,60 @@ Part B, design one network using [the template](../../docs/network-design-templa
 - Small AI/R&D lab network.
 - Docker-based local AI service network.
 
+Use the partial sample below as a depth reference. Your own answer can be shorter, but it should still name subnets, services, ports, paths, access assumptions, and checks.
+
+### Partial Sample: Small AI/R&D Lab Network
+
+Goal: one laptop and one workstation can use an internal model gateway; the GPU server, vector DB, and admin UI stay private; remote access requires authorized VPN.
+
+Topology:
+
+```text
+internet
+  -> home/office router
+  -> 10.20.0.0/24 lab LAN
+       -> laptop 10.20.0.50 DHCP
+       -> workstation 10.20.0.60 DHCP
+       -> gpu-server 10.20.0.10 static
+            -> model-gateway :8080
+            -> model-upstream :8090 internal-only
+            -> vector-db :6333 internal-only
+            -> admin-ui :3000 internal-only or VPN-only
+       -> vpn users 10.30.0.0/24 routed to selected lab services
+```
+
+Subnet plan:
+
+| Subnet | Purpose | Gateway | Notes |
+| --- | --- | --- | --- |
+| `10.20.0.0/24` | Lab LAN | `10.20.0.1` | Main trusted lab network |
+| `10.30.0.0/24` | VPN clients | VPN gateway | Route only required lab prefixes |
+
+Service and exposure sketch:
+
+| Service | Address/name | Port | Exposure |
+| --- | --- | --- | --- |
+| model gateway | `model.lab.local` / `10.20.0.10` | `8080` | LAN and authorized VPN |
+| model upstream | container/internal name | `8090` | gateway only |
+| vector DB | `vectordb.internal` | `6333` | gateway/RAG service only |
+| admin UI | `admin.lab.local` | `3000` | LAN or VPN-only |
+
+Traffic paths:
+
+- Laptop -> DNS `model.lab.local` -> route to `10.20.0.10` -> TCP `8080` -> HTTP -> gateway -> upstream model.
+- Remote user -> VPN DNS policy -> VPN route -> `10.20.0.10:8080` -> gateway -> upstream model.
+- Gateway -> vector DB stays internal; do not publish vector DB to the internet.
+
+Failure checklist:
+
+- DNS: does `model.lab.local` resolve differently on LAN and VPN?
+- Route: does VPN add a route to `10.20.0.0/24` or only selected hosts?
+- TCP: does `10.20.0.10:8080` connect, and do internal-only ports refuse/drop from clients?
+- TLS/HTTP: if HTTPS is added, does certificate hostname match `model.lab.local`?
+- Proxy/gateway: does gateway preserve streaming chunks and `X-Trace-Id`?
+- Capacity: does overload return 429 instead of unbounded latency?
+- Observability: collect gateway logs, upstream metrics, trace id, p95 latency, and one packet capture when behavior is unclear.
+
 ## Observe
 - `X-Trace-Id` across service path where available.
 - Direct generate response and direct stream timing.
@@ -57,4 +111,3 @@ This maps directly to personal labs, Docker AI stacks, model gateways, RAG servi
 
 ## Next Week
 There is no next week. Re-run selected weeks when a real network problem appears, then update your notes with evidence.
-

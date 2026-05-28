@@ -275,7 +275,8 @@ def _doctor() -> int:
     print(f"tshark={'yes' if shutil.which('tshark') else 'no'}")
     print(f"docker={'yes' if shutil.which('docker') else 'no'}")
     print("wireshark=optional but useful for packet-level verification")
-    print("recommended_first_lab=python -m netlab server tcp-echo --host 127.0.0.1 --port 9001")
+    print("recommended_start=python -m netlab path tutorial")
+    print("recommended_first_lab=python labs/week01-ip-routing-subnetting/experiment.py")
     return 0
 
 
@@ -338,6 +339,36 @@ def _path(args: argparse.Namespace) -> int:
 
 
 CONCEPT_SUMMARIES = {
+    "ip": [
+        "An IP address identifies a network-layer endpoint or interface.",
+        "Observe local addresses in Week01 with ipconfig, ip addr, or ifconfig.",
+        "Private/public address does not prove whether an application is listening.",
+        "AI mapping: model gateways and vector DBs often bind to a specific IP/interface.",
+    ],
+    "cidr": [
+        "CIDR writes network size as a prefix, such as 192.168.1.0/24.",
+        "Observe network address, broadcast address, and usable host count in Week01.",
+        "A longer prefix is more specific and wins route selection before the default route.",
+        "AI mapping: small lab networks need planned DHCP and static ranges.",
+    ],
+    "route": [
+        "A route table decides the next hop/interface for a destination IP.",
+        "Observe default route and more-specific routes in Week01 and Week11.",
+        "DNS chooses an address; routing chooses where packets for that address go.",
+        "AI mapping: VPN and Docker problems often come from changed or missing routes.",
+    ],
+    "nat": [
+        "NAT rewrites addresses/ports so private hosts can share another address.",
+        "Observe it as a mental model in Week02; this tutorial does not change router policy.",
+        "NAT allows outbound access but inbound access needs explicit exposure such as port forwarding.",
+        "AI mapping: home lab services need deliberate remote-access boundaries.",
+    ],
+    "firewall": [
+        "A firewall or security group allows, rejects, or drops traffic by policy.",
+        "Observe symptoms in Week02: refused usually differs from timeout/drop.",
+        "Ping success does not prove TCP/HTTP is allowed.",
+        "AI mapping: internal model/UI ports should be allowed intentionally, not broadly exposed.",
+    ],
     "tcp": [
         "TCP is a reliable ordered byte stream between two endpoints.",
         "Observe handshake, payload, ACKs, and teardown in Week03.",
@@ -349,6 +380,18 @@ CONCEPT_SUMMARIES = {
         "Observe query type, answer, TTL, timeout, and NXDOMAIN in Week05.",
         "DNS success does not prove TCP/TLS/HTTP success.",
         "AI mapping: internal model endpoints often fail first at DNS policy.",
+    ],
+    "http": [
+        "HTTP is a request/response protocol with start line, headers, body, and status.",
+        "Observe Content-Length, Connection: close, and status codes in Week06.",
+        "HTTP 500 and 429 mean TCP and HTTP already worked enough to return a response.",
+        "AI mapping: model gateways report application and capacity problems through HTTP status.",
+    ],
+    "tls": [
+        "TLS negotiates an encrypted session after TCP and before HTTPS application data.",
+        "Observe certificate validation, hostname match, SNI, ALPN, and cipher in Week07.",
+        "TLS failure happens before an HTTP status exists.",
+        "AI mapping: internal HTTPS model endpoints often fail on CA trust or hostname mismatch.",
     ],
     "http-streaming": [
         "HTTP streaming sends the response body progressively.",
