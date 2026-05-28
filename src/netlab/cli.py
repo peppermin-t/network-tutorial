@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import platform
+import shutil
 import sys
 import time
 
@@ -101,6 +103,16 @@ def build_parser() -> argparse.ArgumentParser:
     fault_classify = fault_sub.add_parser("classify", help="Explain where a failure belongs")
     fault_classify.add_argument("scenario")
 
+    subparsers.add_parser("doctor", help="Print local environment hints")
+
+    path = subparsers.add_parser("path", help="Print recommended learning paths")
+    path_sub = path.add_subparsers(dest="kind", required=True)
+    path_sub.add_parser("ai", help="AI/LLM engineering fast track")
+    path_sub.add_parser("vpn", help="VPN mental model path")
+
+    concept = subparsers.add_parser("concept", help="Print a short concept summary")
+    concept.add_argument("name")
+
     return parser
 
 
@@ -122,6 +134,12 @@ def main(argv: list[str] | None = None) -> int:
         return _capture(args)
     if args.command == "fault":
         return _fault(args)
+    if args.command == "doctor":
+        return _doctor()
+    if args.command == "path":
+        return _path(args)
+    if args.command == "concept":
+        return _concept(args)
     raise AssertionError(args.command)
 
 
@@ -231,6 +249,102 @@ def _fault(args: argparse.Namespace) -> int:
         print(f"expected_client_result={scenario.expected_client_result}")
         return 0
     raise AssertionError(args.kind)
+
+
+def _doctor() -> int:
+    print(f"python={sys.version.split()[0]}")
+    print(f"platform={platform.platform()}")
+    print(f"tshark={'yes' if shutil.which('tshark') else 'no'}")
+    print(f"docker={'yes' if shutil.which('docker') else 'no'}")
+    print("wireshark=optional but useful for packet-level verification")
+    print("recommended_first_lab=python -m netlab server tcp-echo --host 127.0.0.1 --port 9001")
+    return 0
+
+
+def _path(args: argparse.Namespace) -> int:
+    if args.kind == "ai":
+        lines = [
+            "AI/LLM engineering fast track:",
+            "1. week01-sockets: host/port, TCP/UDP, connection lifecycle",
+            "2. week04-dns: name resolution and DNS failure",
+            "3. week05-http: request/response/body/streaming foundation",
+            "4. week06-proxy-timeout-retry: gateway, timeout, retry, failure classification",
+            "5. week09-container-networking: service names, bridge network, port mapping",
+            "6. week10-capstone: client -> gateway -> model-like upstream",
+            "7. optional week11-vpn-mental-model: VPN/routing/DNS extension",
+        ]
+    elif args.kind == "vpn":
+        lines = [
+            "VPN mental model path:",
+            "1. week01-sockets: TCP/UDP and connection outcomes",
+            "2. week04-dns: DNS query, TTL, timeout, NXDOMAIN",
+            "3. week07-tls: HTTPS, certificate validation, SNI",
+            "4. week09-container-networking: namespaces and localhost intuition",
+            "5. week11-vpn-mental-model: route table, DNS policy, full/split tunnel",
+        ]
+    else:
+        raise AssertionError(args.kind)
+    print("\n".join(lines))
+    return 0
+
+
+CONCEPT_SUMMARIES = {
+    "tcp": [
+        "TCP is a reliable ordered byte stream between two endpoints.",
+        "Observe handshake, payload, ACKs, and teardown in Week01.",
+        "TCP does not preserve application message boundaries.",
+        "AI mapping: slow model response after connect is usually above TCP.",
+    ],
+    "dns": [
+        "DNS maps names to records before a connection can be made.",
+        "Observe query type, answer, TTL, timeout, and NXDOMAIN in Week04.",
+        "DNS success does not prove TCP/TLS/HTTP success.",
+        "AI mapping: internal model endpoints often fail first at DNS policy.",
+    ],
+    "http-streaming": [
+        "HTTP streaming sends the response body progressively.",
+        "Observe chunked responses and first byte vs total latency in Week10.",
+        "Streaming can be broken by proxy buffering.",
+        "AI mapping: token streaming quality depends on prompt first chunk forwarding.",
+    ],
+    "proxy-buffering": [
+        "Proxy buffering means a gateway reads upstream data before forwarding it.",
+        "Observe direct `/stream` versus gateway `/stream` in Week10.",
+        "If chunks arrive all at once, streaming has likely been buffered.",
+        "AI mapping: model server streams correctly but users still see delayed output.",
+    ],
+    "docker-localhost": [
+        "Localhost points to the current network namespace.",
+        "Inside a container, localhost is the container itself.",
+        "Use Compose service names for service-to-service calls.",
+        "AI mapping: containerized agents often point at the wrong model endpoint.",
+    ],
+    "backpressure": [
+        "Backpressure rejects or slows callers when capacity is exhausted.",
+        "Observe HTTP 429 and p50/p95 latency in Week10.",
+        "429 is a capacity signal, not a TCP failure.",
+        "AI mapping: GPU workers and queues need explicit overload behavior.",
+    ],
+    "vpn": [
+        "VPN combines virtual interface, route table, encrypted tunnel, and DNS policy.",
+        "Observe route and DNS snapshots before and after VPN in Week11.",
+        "Full tunnel and split tunnel change different paths.",
+        "AI mapping: internal model endpoints may depend on authorized routes and DNS.",
+    ],
+}
+
+
+def _concept(args: argparse.Namespace) -> int:
+    name = args.name.strip().lower()
+    summary = CONCEPT_SUMMARIES.get(name)
+    if summary is None:
+        print("unknown concept")
+        print("available=" + ", ".join(sorted(CONCEPT_SUMMARIES)))
+        return 1
+    print(name)
+    for line in summary:
+        print(f"- {line}")
+    return 0
 
 
 if __name__ == "__main__":

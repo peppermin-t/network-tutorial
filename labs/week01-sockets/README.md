@@ -2,6 +2,20 @@
 
 Focus: TCP/UDP echo, host, port, blocking calls, connection lifecycle.
 
+## Before You Run: Concepts
+
+- `Host / Port`: the address and application endpoint you are trying to reach. See `docs/concepts.md#host--port`.
+- `Socket`: the Python API for network I/O. See `docs/concepts.md#socket`.
+- `TCP handshake`: what happens before TCP carries bytes. See `docs/concepts.md#tcp-handshake`.
+- `UDP`: datagrams without TCP connection setup. See `docs/concepts.md#udp`.
+- `Connection refused`: a reachable host rejected a closed TCP port. See `docs/concepts.md#connection-refused`.
+
+## If You Are Confused
+
+- If you do not understand why UDP has no `accept`, read `UDP` and `connection lifecycle`.
+- If a closed port fails immediately, compare `connection refused` with `timeout`.
+- If Docker or VPN later changes what `localhost` means, come back to `localhost / 127.0.0.1 / loopback`.
+
 Run:
 
 ```powershell

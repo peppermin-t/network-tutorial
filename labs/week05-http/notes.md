@@ -1,6 +1,23 @@
 # Week 05 Notes
 
-- Request:
-- Response:
-- Header/body boundary:
-- curl comparison:
+## Commands I ran
+
+## Expected result
+
+## Actual result
+
+## Code path
+
+## Packet observation
+
+## Logs / trace / metrics
+
+## Failure injected
+
+## Layer classification
+
+## AI engineering mapping
+
+## One thing I misunderstood before
+
+## One thing to verify again

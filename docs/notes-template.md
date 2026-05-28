@@ -1,4 +1,4 @@
-# Week 07 Notes
+# Lab Notes
 
 ## Commands I ran
 

@@ -1,10 +1,15 @@
 # Python Network Lab Tutorial Project
 
-`python-network-lab` 是一个代码驱动的计算机网络学习项目。它用 Python 从 socket 开始，逐步搭建 TCP/UDP、协议解析、DNS、HTTP、代理、TLS、RPC、WebSocket、Docker 网络、并发/背压、故障注入和可观测通信系统。
+`python-network-lab` is a code-driven computer networking learning lab. It starts from Python `socket` and gradually builds TCP/UDP, protocol framing, DNS, HTTP, proxy/gateway behavior, TLS, RPC/WebSocket, Docker networking, concurrency/backpressure, failure handling, observability, and packet-level verification.
 
-目标不是只读概念，而是每周都有可运行代码、实验命令、测试和复盘问题。
+## What this repo is
 
-统一主线：
+- This is a code-driven network learning lab.
+- It is not a production network library.
+- It is not a full computer networking textbook.
+- It is not a VPN bypass, anonymity, censorship-circumvention, or commercial proxy tutorial.
+
+The main path is:
 
 ```text
 Application Intent
@@ -19,8 +24,6 @@ Application Intent
 -> Packet-Level Verification
 ```
 
-云服务、分布式系统、本地模型服务部署都是验证场景；目录主线仍然是这条分层通信链路。
-
 ## Quick Start
 
 ```powershell
@@ -31,61 +34,42 @@ python -m unittest discover -s tests -p "test_*.py"
 python -m netlab --help
 ```
 
-不安装包也可以直接运行：
+Without installing the package:
 
 ```powershell
 $env:PYTHONPATH="src"
 python -m netlab --help
 ```
 
-## CLI Examples
+## For AI/LLM Engineering Learners
 
-启动 TCP echo server：
+This tutorial helps build network intuition for local model serving, gateway/reverse proxy behavior, HTTP streaming responses, timeout/retry/backpressure, Docker networking, and DNS/TLS/VPN-related debugging.
+
+See [docs/ai-engineering-learning-path.md](docs/ai-engineering-learning-path.md) for the focused path.
+
+## Fast Track
+
+1. `labs/week01-sockets`: host/port, TCP/UDP, connection lifecycle.
+2. `labs/week04-dns`: name resolution, TTL, DNS failure modes.
+3. `labs/week05-http`: HTTP request/response/body and streaming foundation.
+4. `labs/week06-proxy-timeout-retry`: gateway, timeout, retry, failure classification.
+5. `labs/week09-container-networking`: Docker service names, bridge network, port mapping.
+6. `labs/week10-capstone`: client -> gateway -> model-like upstream.
+7. `labs/week11-vpn-mental-model`: optional VPN/routing/DNS mental model.
+
+## CLI Examples
 
 ```powershell
 python -m netlab server tcp-echo --host 127.0.0.1 --port 9001
-```
-
-另开一个终端调用：
-
-```powershell
 python -m netlab client tcp-echo --host 127.0.0.1 --port 9001 --message "hello tcp"
-```
-
-DNS 查询：
-
-```powershell
 python -m netlab dns query example.com --type A --server 8.8.8.8
-```
-
-HTTP server/client：
-
-```powershell
 python -m netlab server http --host 127.0.0.1 --port 8080
 python -m netlab client http --host 127.0.0.1 --port 8080 --path /
-```
-
-WebSocket echo：
-
-```powershell
-python -m netlab server websocket --host 127.0.0.1 --port 8765
-python -m netlab client websocket --host 127.0.0.1 --port 8765 --message "ping"
-```
-
-故障归层：
-
-```powershell
-python -m netlab fault classify read-timeout
 python -m netlab fault classify retry-storm
-```
-
-并发压测：
-
-```powershell
 python -m netlab client load-http --host 127.0.0.1 --port 8080 --requests 20 --concurrency 5
 ```
 
-Model-like upstream：
+Model-like upstream:
 
 ```powershell
 python -m netlab server model --host 127.0.0.1 --port 8090 --max-concurrency 2 --tokens 8 --token-delay 0.1
@@ -99,27 +83,45 @@ python -m netlab capture status
 python -m netlab capture command --interface "Adapter for loopback traffic capture" --output captures/week05-http.pcapng --filter "tcp port 8080" --packets 20
 ```
 
-See [docs/wireshark.md](docs/wireshark.md) for the capture workflow and [docs/capture-first-day.md](docs/capture-first-day.md) for a first-day route.
-
 ## 10-Week Path
 
-1. `labs/week01-sockets`: TCP/UDP echo、端口、连接生命周期。
-2. `labs/week02-tcp-udp`: 长度前缀、分包/粘包、心跳、超时。
-3. `labs/week03-packet-thinking`: 用字节数组模拟协议头和 payload。
-4. `labs/week04-dns`: DNS message、查询、TTL cache。
-5. `labs/week05-http`: HTTP/1.1 parser、client、server、keep-alive。
-6. `labs/week06-proxy-timeout-retry`: forward/reverse proxy、timeout、retry。
-7. `labs/week07-tls`: Python `ssl`、本地证书、SNI/ALPN 观察。
-8. `labs/week08-rpc-websocket`: JSON-RPC over HTTP、WebSocket。
-9. `labs/week09-container-networking`: Docker Compose、服务名解析、bridge network。
-10. `labs/week10-capstone`: client -> gateway -> model-like upstream 的可观测通信系统。
+1. `labs/week01-sockets`: TCP/UDP echo, port, connection lifecycle.
+2. `labs/week02-tcp-udp`: length prefix, packet split/sticky packets, heartbeat, timeout.
+3. `labs/week03-packet-thinking`: protocol header and payload as bytes.
+4. `labs/week04-dns`: DNS message, query, TTL cache.
+5. `labs/week05-http`: HTTP/1.1 parser, client, server, keep-alive.
+6. `labs/week06-proxy-timeout-retry`: forward/reverse proxy, timeout, retry.
+7. `labs/week07-tls`: Python `ssl`, local certificate, SNI/ALPN observation.
+8. `labs/week08-rpc-websocket`: JSON-RPC over HTTP, WebSocket.
+9. `labs/week09-container-networking`: Docker Compose, service name DNS, bridge network.
+10. `labs/week10-capstone`: observable client -> gateway -> model-like upstream system.
 
-每个 lab 都包含 `README.md`、`experiment.py`、`notes.md`。先跑实验，再读源码，最后写观察结论。
+Week11 is an optional extension for VPN mental models. It uses read-only observation only and does not configure a VPN.
+
+## How to use this repo
+
+1. Run the lab.
+2. Read the code path that handled the request.
+3. Capture packets when Wireshark/TShark is available.
+4. Inspect logs, HTTP status, headers, trace ids, and metrics.
+5. Write notes using [docs/notes-template.md](docs/notes-template.md).
+6. Map the observation to real engineering problems.
+
+## Links
+
+- [Concepts](docs/concepts.md)
+- [Glossary](docs/glossary.md)
+- [AI/LLM engineering learning path](docs/ai-engineering-learning-path.md)
+- [Network debug playbook](docs/network-debug-playbook.md)
+- [Concept map](docs/concept-map.md)
+- [Further reading](docs/further-reading.md)
+- [Notes template](docs/notes-template.md)
+- [Wireshark workflow](docs/wireshark.md)
+- [First-day capture route](docs/capture-first-day.md)
 
 ## Tooling Notes
 
-- 主线只依赖 Python 标准库。
-- 单元测试使用 `unittest`，也兼容 `pytest` 发现。
-- Docker 用于第 9 周和第 10 周增强实验。
-- Wireshark/tshark 是强烈推荐的增强层，不是必需条件。没有它也能完成全部代码实验；装好后可以把每周实验和真实报文对应起来。
-- 并发、背压、故障注入和 model-like upstream 用来验证同一套底层网络知识，不是额外拼接的独立主题。
+- The main path uses only the Python standard library.
+- Unit tests use `unittest` and are compatible with `pytest` discovery.
+- Docker is used for Week09 and optional Week10 container experiments.
+- Wireshark/TShark is useful but not required for the core code labs.

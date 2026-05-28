@@ -2,6 +2,20 @@
 
 Focus: Docker Compose, service name DNS, bridge network, port mapping, network isolation.
 
+## Before You Run: Concepts
+
+- `Container network namespace`: each container has its own network view. See `docs/concepts.md#container-network-namespace`.
+- `Bridge network`: the virtual network connecting Compose services. See `docs/concepts.md#bridge-network`.
+- `Service name`: Docker Compose DNS name. See `docs/concepts.md#service-name`.
+- `Port mapping`: host port forwarded to container port. See `docs/concepts.md#port-mapping`.
+- `Why localhost inside a container is not the host`: loopback is namespace-local. See `docs/concepts.md#why-localhost-inside-a-container-is-not-the-host`.
+
+## If You Are Confused
+
+- If host can connect but a container cannot, compare host port, container port, and service name.
+- If `localhost` fails inside a container, read `container network namespace`.
+- If service names work in Compose but not on the host, read `Docker Compose service name DNS`.
+
 Run:
 
 ```powershell

@@ -2,6 +2,20 @@
 
 Focus: reverse proxy, upstream latency, retry policy, connection reuse thinking.
 
+## Before You Run: Concepts
+
+- `Forward proxy vs reverse proxy`: which side the proxy represents. See `docs/concepts.md#forward-proxy-vs-reverse-proxy`.
+- `Gateway`: the controlled hop between client and upstream. See `docs/concepts.md#gateway`.
+- `Upstream timeout`: the gateway waited too long on a dependency. See `docs/concepts.md#upstream-timeout`.
+- `Retry`: useful for transient failures but dangerous under overload. See `docs/concepts.md#retry`.
+- `Retry storm`: retries multiplying load. See `docs/concepts.md#retry-storm`.
+
+## If You Are Confused
+
+- If a request reaches the gateway but not the upstream, compare downstream and upstream TCP connections.
+- If retry seems always good, read `retry storm` and `backpressure`.
+- If a model endpoint is slow, separate connect timeout, read timeout, upstream timeout, and gateway timeout.
+
 Run:
 
 ```powershell
@@ -10,9 +24,31 @@ python -m netlab server http --host 127.0.0.1 --port 8080
 python -m netlab proxy reverse --host 127.0.0.1 --port 8081 --upstream-host 127.0.0.1 --upstream-port 8080
 python -m netlab client http --host 127.0.0.1 --port 8081 --path /via-proxy
 python -m netlab server fault-http --host 127.0.0.1 --port 8082 --mode delay --delay 5
+python -m netlab server fault-http --host 127.0.0.1 --port 8082 --mode slow --delay 0.5
+python -m netlab server fault-http --host 127.0.0.1 --port 8082 --mode close
+python -m netlab server fault-http --host 127.0.0.1 --port 8082 --mode 500
 python -m netlab client http --host 127.0.0.1 --port 8082 --path /slow
 python labs/week06-proxy-timeout-retry/experiment.py
 ```
+
+Failure modes to classify:
+
+```powershell
+python -m netlab fault classify connection-refused
+python -m netlab fault classify read-timeout
+python -m netlab fault classify upstream-slow
+python -m netlab fault classify retry-storm
+python -m netlab fault classify http-500
+python -m netlab fault classify too-many-requests
+```
+
+Timeout mapping:
+
+- Connect timeout: the TCP connection could not be established in budget.
+- Read timeout: the connection exists, but response bytes did not arrive in budget.
+- Upstream timeout: the gateway timed out while waiting for upstream.
+- Gateway timeout: the client sees the gateway's failure response or connection close.
+- Retry risk: retrying slow model generation can multiply GPU worker pressure.
 
 Questions:
 

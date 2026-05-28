@@ -31,12 +31,28 @@ def _handle_fault(conn: socket.socket, addr: tuple[str, int], mode: str, delay: 
         logger.event("request", remote=remote, mode=mode, target=request.target)
         if mode == "close":
             return
-        if mode in {"delay", "slow"}:
+        if mode == "delay":
             time.sleep(delay)
             body = f"delayed {delay:.3f}s\n".encode("utf-8")
             conn.sendall(build_http_response(200, "OK", body, {"Content-Type": "text/plain"}))
+            return
+        if mode == "slow":
+            conn.sendall(
+                b"HTTP/1.1 200 OK\r\n"
+                b"Content-Type: text/plain\r\n"
+                b"Transfer-Encoding: chunked\r\n"
+                b"Connection: close\r\n\r\n"
+            )
+            for index in range(3):
+                time.sleep(delay)
+                conn.sendall(_chunk(f"slow-{index + 1}\n".encode("utf-8")))
+            conn.sendall(b"0\r\n\r\n")
             return
         if mode in {"500", "error"}:
             conn.sendall(build_http_response(status_code, "Injected Error", b"injected error\n", {"Content-Type": "text/plain"}))
             return
         conn.sendall(build_http_response(200, "OK", b"ok\n", {"Content-Type": "text/plain"}))
+
+
+def _chunk(payload: bytes) -> bytes:
+    return f"{len(payload):X}\r\n".encode("ascii") + payload + b"\r\n"

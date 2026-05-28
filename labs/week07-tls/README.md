@@ -2,6 +2,19 @@
 
 Focus: Python `ssl`, certificate validation, SNI, ALPN/cipher observation.
 
+## Before You Run: Concepts
+
+- `TLS`: encrypted/authenticated transport after TCP connects. See `docs/concepts.md#tls`.
+- `Certificate validation`: server identity and trust chain checks. See `docs/concepts.md#certificate-validation`.
+- `SNI`: hostname sent in TLS ClientHello. See `docs/concepts.md#sni`.
+- `ALPN`: application protocol negotiation inside TLS. See `docs/concepts.md#alpn`.
+- `What TLS hides and what it does not hide`: content versus metadata. See `docs/concepts.md#what-tls-hides-and-what-it-does-not-hide`.
+
+## If You Are Confused
+
+- If TCP connects but HTTPS fails, read `certificate validation` before blaming HTTP.
+- If packet capture no longer shows headers/body, read `encrypted application data`.
+
 Run:
 
 ```powershell

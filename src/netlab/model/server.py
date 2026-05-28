@@ -44,21 +44,29 @@ def run_model_server(host: str, port: int, max_concurrency: int = 2, token_delay
 
 
 def _handle_model(conn: socket.socket, addr: tuple[str, int], gate: BackpressureGate, metrics: Metrics, config: GenerationConfig, logger: EventLogger) -> None:
-    decision = gate.try_acquire()
     remote = f"{addr[0]}:{addr[1]}"
-    if not decision.accepted:
-        with conn:
+    with conn:
+        data = conn.recv(65535)
+        if not data:
+            return
+        request = parse_http_request(data)
+        trace_id = request.headers.get("x-trace-id") or new_trace_id()
+        decision = gate.try_acquire()
+        if not decision.accepted:
             metrics.increment("requests.rejected")
-            conn.sendall(build_http_response(429, "Too Many Requests", b"capacity exceeded\n", {"Content-Type": "text/plain"}))
-        logger.event("rejected", remote=remote, layer=decision.layer, status=decision.status_code)
-        return
+            conn.sendall(
+                build_http_response(
+                    429,
+                    "Too Many Requests",
+                    b"capacity exceeded\n",
+                    {"Content-Type": "text/plain", "X-Trace-Id": trace_id},
+                )
+            )
+            logger.event("rejected", remote=remote, trace_id=trace_id, layer=decision.layer, status=decision.status_code)
+            return
 
-    started = time.perf_counter()
-    trace_id = new_trace_id()
-    try:
-        with conn:
-            data = conn.recv(65535)
-            request = parse_http_request(data)
+        started = time.perf_counter()
+        try:
             metrics.increment("requests.accepted")
             if request.target.startswith("/metrics"):
                 conn.sendall(build_http_response(200, "OK", metrics.render_prometheus().encode("utf-8"), {"Content-Type": "text/plain"}))
@@ -69,8 +77,8 @@ def _handle_model(conn: socket.socket, addr: tuple[str, int], gate: Backpressure
                 _send_complete(conn, request.target, config, trace_id)
             elapsed_ms = round((time.perf_counter() - started) * 1000, 3)
             logger.event("completed", remote=remote, target=request.target, trace_id=trace_id, elapsed_ms=elapsed_ms)
-    finally:
-        gate.release()
+        finally:
+            gate.release()
 
 
 def _send_complete(conn: socket.socket, target: str, config: GenerationConfig, trace_id: str) -> None:
