@@ -351,11 +351,41 @@ CONCEPT_SUMMARIES = {
         "A longer prefix is more specific and wins route selection before the default route.",
         "AI mapping: small lab networks need planned DHCP and static ranges.",
     ],
+    "subnet": [
+        "A subnet is a range of IP addresses treated as one local network segment.",
+        "Observe subnet mask, network address, broadcast address, and usable hosts in Week01.",
+        "Hosts in the same subnet usually communicate directly; other destinations go through a gateway.",
+        "AI mapping: lab devices, NAS, GPU servers, and guest devices should have planned address ranges.",
+    ],
+    "gateway": [
+        "A gateway is the next hop used to reach addresses outside the local subnet.",
+        "Observe default gateway and default route in Week01.",
+        "A gateway forwards packets; it is not the same role as a DNS server.",
+        "AI mapping: wrong gateway or missing VPN route can make internal model services unreachable.",
+    ],
+    "dns-server": [
+        "A DNS server answers name lookup requests; a gateway forwards packets.",
+        "Observe DNS server addresses separately from the default gateway in Week01 and Week05.",
+        "DNS success returns an address but does not prove TCP, TLS, HTTP, or application success.",
+        "AI mapping: internal service names often depend on Docker, VPN, or lab DNS policy.",
+    ],
     "route": [
         "A route table decides the next hop/interface for a destination IP.",
         "Observe default route and more-specific routes in Week01 and Week11.",
         "DNS chooses an address; routing chooses where packets for that address go.",
         "AI mapping: VPN and Docker problems often come from changed or missing routes.",
+    ],
+    "arp": [
+        "ARP maps an IPv4 address to a MAC address on the local network.",
+        "Observe arp -a or ip neigh output in Week02.",
+        "ARP is local-subnet evidence; it does not prove TCP, TLS, HTTP, or application behavior.",
+        "AI mapping: local lab reachability starts with whether the host can find its local next hop.",
+    ],
+    "icmp": [
+        "ICMP carries control messages used by tools such as ping and traceroute.",
+        "Observe loopback ping and optional traceroute behavior in Week02.",
+        "Ping success does not prove HTTP success, and ping failure does not always prove service failure.",
+        "AI mapping: ICMP is a reachability hint, not a model gateway health check.",
     ],
     "nat": [
         "NAT rewrites addresses/ports so private hosts can share another address.",

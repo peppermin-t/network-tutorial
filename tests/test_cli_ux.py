@@ -70,7 +70,20 @@ class CliUxTest(unittest.TestCase):
         self.assertIn("route table", output.getvalue())
 
     def test_common_concepts_have_cli_summaries(self) -> None:
-        for concept in ("ip", "cidr", "route", "nat", "firewall", "tls", "http"):
+        for concept in (
+            "ip",
+            "cidr",
+            "subnet",
+            "gateway",
+            "dns-server",
+            "route",
+            "arp",
+            "icmp",
+            "nat",
+            "firewall",
+            "tls",
+            "http",
+        ):
             with self.subTest(concept=concept):
                 output = io.StringIO()
                 with contextlib.redirect_stdout(output):

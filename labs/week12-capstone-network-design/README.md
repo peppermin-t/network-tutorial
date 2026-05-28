@@ -31,7 +31,67 @@ Part B, design one network using [the template](../../docs/network-design-templa
 - Small AI/R&D lab network.
 - Docker-based local AI service network.
 
-Use the partial sample below as a depth reference. Your own answer can be shorter, but it should still name subnets, services, ports, paths, access assumptions, and checks.
+Use the partial samples below as depth references. Your own answer can be shorter, but it should still name subnets, services, ports, paths, access assumptions, and checks.
+
+### Partial Sample: Home / Personal Lab Network
+
+Goal: keep daily devices simple, give the NAS/home server stable addresses, isolate guest and IoT devices, and avoid exposing services directly to the public internet unless there is a deliberate access plan.
+
+Topology:
+
+```text
+internet
+  -> router 192.168.10.1
+       -> main Wi-Fi / wired LAN 192.168.10.0/24
+            -> laptop DHCP 192.168.10.50-99
+            -> desktop static 192.168.10.10
+            -> NAS/home-server static 192.168.10.20
+                 -> files :445 LAN-only
+                 -> photos :2283 LAN/VPN-only
+                 -> lab dashboard :3000 LAN-only
+            -> printer static 192.168.10.30
+       -> IoT Wi-Fi 192.168.30.0/24
+            -> cameras, speakers, smart plugs DHCP
+       -> guest Wi-Fi 192.168.40.0/24
+            -> visitors DHCP, internet-only
+       -> optional VPN clients 192.168.50.0/24
+            -> route to selected LAN services only
+```
+
+Subnet and assignment plan:
+
+| Subnet | Purpose | Gateway | Assignment |
+| --- | --- | --- | --- |
+| `192.168.10.0/24` | Main LAN | `192.168.10.1` | DHCP `.50-.199`, static `.2-.49` |
+| `192.168.30.0/24` | IoT | `192.168.30.1` | DHCP only, no access to main LAN by default |
+| `192.168.40.0/24` | Guest | `192.168.40.1` | DHCP only, internet-only |
+| `192.168.50.0/24` | VPN clients | VPN gateway | Route only approved services |
+
+DNS naming and services:
+
+| Name | Target | Port | Exposure |
+| --- | --- | --- | --- |
+| `nas.home.arpa` | `192.168.10.20` | `445` | Main LAN only |
+| `photos.home.arpa` | `192.168.10.20` | `2283` | Main LAN and VPN |
+| `dashboard.home.arpa` | `192.168.10.20` | `3000` | Main LAN only |
+| `desktop.home.arpa` | `192.168.10.10` | RDP/SSH if enabled | Main LAN only |
+
+Traffic paths:
+
+- Laptop -> DNS `photos.home.arpa` -> route inside `192.168.10.0/24` -> TCP `2283` -> HTTP app.
+- Phone on guest Wi-Fi -> internet only; no path to `192.168.10.20`.
+- IoT device -> internet/cloud service; no inbound path to desktop or NAS.
+- Remote laptop -> authorized VPN -> route to `192.168.10.20:2283`; no broad access to IoT/guest networks.
+
+Failure checklist:
+
+- DNS: does `photos.home.arpa` resolve to the NAS address on LAN and VPN?
+- Route: is the client on main LAN, guest, IoT, or VPN?
+- ARP/local: can main LAN clients see the router/NAS as local neighbors?
+- TCP: is the NAS service listening on the expected port?
+- HTTP/app: does the web UI return a status/body after TCP connects?
+- Access boundary: is guest/IoT isolation blocking the path intentionally?
+- Observability: keep router DHCP leases, service logs, simple uptime checks, and a notes table of static IPs.
 
 ### Partial Sample: Small AI/R&D Lab Network
 
