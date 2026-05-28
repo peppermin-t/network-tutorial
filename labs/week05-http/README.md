@@ -4,11 +4,11 @@ Focus: request line, status line, headers, body, content-length, chunked respons
 
 ## Before You Run: Concepts
 
-- `Request line`: method, path, and HTTP version. See `docs/concepts.md#request-line`.
-- `Status line`: HTTP result above TCP. See `docs/concepts.md#status-line`.
-- `Headers`: metadata such as `Host`, `Content-Length`, and `Connection`. See `docs/concepts.md#headers`.
-- `Content-Length`: fixed body length. See `docs/concepts.md#content-length`.
-- `Chunked transfer encoding`: streaming-friendly body framing. See `docs/concepts.md#chunked-transfer-encoding`.
+- `Request line`: method, path, and HTTP version. See `../../docs/concepts.md#request-line`.
+- `Status line`: HTTP result above TCP. See `../../docs/concepts.md#status-line`.
+- `Headers`: metadata such as `Host`, `Content-Length`, and `Connection`. See `../../docs/concepts.md#headers`.
+- `Content-Length`: fixed body length. See `../../docs/concepts.md#content-length`.
+- `Chunked transfer encoding`: streaming-friendly body framing. See `../../docs/concepts.md#chunked-transfer-encoding`.
 
 ## If You Are Confused
 

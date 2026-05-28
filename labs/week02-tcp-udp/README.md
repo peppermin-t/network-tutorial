@@ -4,10 +4,10 @@ Focus: length-prefixed messages, partial reads, sticky packets, heartbeat, timeo
 
 ## Before You Run: Concepts
 
-- `TCP`: a reliable byte stream, not a message protocol. See `docs/concepts.md#tcp`.
-- `UDP`: datagram boundaries are preserved. See `docs/concepts.md#udp`.
-- `Socket`: `recv` returns available bytes, not a full logical message. See `docs/concepts.md#socket`.
-- `Timeout`: a local decision to stop waiting. See `docs/concepts.md#timeout`.
+- `TCP`: a reliable byte stream, not a message protocol. See `../../docs/concepts.md#tcp`.
+- `UDP`: datagram boundaries are preserved. See `../../docs/concepts.md#udp`.
+- `Socket`: `recv` returns available bytes, not a full logical message. See `../../docs/concepts.md#socket`.
+- `Timeout`: a local decision to stop waiting. See `../../docs/concepts.md#timeout`.
 
 ## If You Are Confused
 

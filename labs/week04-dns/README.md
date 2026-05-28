@@ -4,11 +4,11 @@ Focus: DNS message format, A/AAAA/CNAME, UDP query, TTL cache.
 
 ## Before You Run: Concepts
 
-- `DNS query`: name resolution before connection. See `docs/concepts.md#dns-query`.
-- `A / AAAA / CNAME`: common record types. See `docs/concepts.md#a--aaaa--cname`.
-- `TTL`: how long a DNS answer can be cached. See `docs/concepts.md#ttl`.
-- `DNS timeout vs NXDOMAIN`: no answer in time versus name does not exist. See `docs/concepts.md#dns-timeout-vs-nxdomain`.
-- `Docker Compose service name DNS`: the container version of service discovery. See `docs/concepts.md#docker-compose-service-name-dns`.
+- `DNS query`: name resolution before connection. See `../../docs/concepts.md#dns-query`.
+- `A / AAAA / CNAME`: common record types. See `../../docs/concepts.md#a--aaaa--cname`.
+- `TTL`: how long a DNS answer can be cached. See `../../docs/concepts.md#ttl`.
+- `DNS timeout vs NXDOMAIN`: no answer in time versus name does not exist. See `../../docs/concepts.md#dns-timeout-vs-nxdomain`.
+- `Docker Compose service name DNS`: the container version of service discovery. See `../../docs/concepts.md#docker-compose-service-name-dns`.
 
 ## If You Are Confused
 

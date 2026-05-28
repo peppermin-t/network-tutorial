@@ -32,13 +32,21 @@ class CliUxTest(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("week11-vpn-mental-model", output.getvalue())
 
-    def test_known_concept_outputs_summary(self) -> None:
+    def test_concept_tcp_outputs_summary(self) -> None:
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             code = main(["concept", "tcp"])
 
         self.assertEqual(code, 0)
         self.assertIn("byte stream", output.getvalue())
+
+    def test_concept_vpn_outputs_summary(self) -> None:
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            code = main(["concept", "vpn"])
+
+        self.assertEqual(code, 0)
+        self.assertIn("route table", output.getvalue())
 
     def test_unknown_concept_returns_nonzero_without_crashing(self) -> None:
         output = io.StringIO()

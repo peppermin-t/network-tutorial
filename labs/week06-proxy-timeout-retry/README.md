@@ -4,11 +4,11 @@ Focus: reverse proxy, upstream latency, retry policy, connection reuse thinking.
 
 ## Before You Run: Concepts
 
-- `Forward proxy vs reverse proxy`: which side the proxy represents. See `docs/concepts.md#forward-proxy-vs-reverse-proxy`.
-- `Gateway`: the controlled hop between client and upstream. See `docs/concepts.md#gateway`.
-- `Upstream timeout`: the gateway waited too long on a dependency. See `docs/concepts.md#upstream-timeout`.
-- `Retry`: useful for transient failures but dangerous under overload. See `docs/concepts.md#retry`.
-- `Retry storm`: retries multiplying load. See `docs/concepts.md#retry-storm`.
+- `Forward proxy vs reverse proxy`: which side the proxy represents. See `../../docs/concepts.md#forward-proxy-vs-reverse-proxy`.
+- `Gateway`: the controlled hop between client and upstream. See `../../docs/concepts.md#gateway`.
+- `Upstream timeout`: the gateway waited too long on a dependency. See `../../docs/concepts.md#upstream-timeout`.
+- `Retry`: useful for transient failures but dangerous under overload. See `../../docs/concepts.md#retry`.
+- `Retry storm`: retries multiplying load. See `../../docs/concepts.md#retry-storm`.
 
 ## If You Are Confused
 

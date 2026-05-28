@@ -4,11 +4,11 @@ Focus: Docker Compose, service name DNS, bridge network, port mapping, network i
 
 ## Before You Run: Concepts
 
-- `Container network namespace`: each container has its own network view. See `docs/concepts.md#container-network-namespace`.
-- `Bridge network`: the virtual network connecting Compose services. See `docs/concepts.md#bridge-network`.
-- `Service name`: Docker Compose DNS name. See `docs/concepts.md#service-name`.
-- `Port mapping`: host port forwarded to container port. See `docs/concepts.md#port-mapping`.
-- `Why localhost inside a container is not the host`: loopback is namespace-local. See `docs/concepts.md#why-localhost-inside-a-container-is-not-the-host`.
+- `Container network namespace`: each container has its own network view. See `../../docs/concepts.md#container-network-namespace`.
+- `Bridge network`: the virtual network connecting Compose services. See `../../docs/concepts.md#bridge-network`.
+- `Service name`: Docker Compose DNS name. See `../../docs/concepts.md#service-name`.
+- `Port mapping`: host port forwarded to container port. See `../../docs/concepts.md#port-mapping`.
+- `Why localhost inside a container is not the host`: loopback is namespace-local. See `../../docs/concepts.md#why-localhost-inside-a-container-is-not-the-host`.
 
 ## If You Are Confused
 

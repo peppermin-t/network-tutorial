@@ -12,7 +12,7 @@ from netlab.common.retry import RetryPolicy
 from netlab.dns.resolver import CachingResolver
 from netlab.faults.model import classify_failure
 from netlab.faults.server import run_fault_http_server
-from netlab.http.client import http_request
+from netlab.http.client import http_request, stream_http_request
 from netlab.http.server import run_http_server
 from netlab.model.server import run_model_server
 from netlab.observability.trace import span
@@ -49,6 +49,10 @@ def build_parser() -> argparse.ArgumentParser:
     udp_client.add_argument("--message", default="hello udp")
     http_client = _host_port(client_sub.add_parser("http", help="Call HTTP server"), default_port=8080)
     http_client.add_argument("--path", default="/")
+    stream_http = _host_port(client_sub.add_parser("stream-http", help="Call HTTP server and print response timing"), default_port=8080)
+    stream_http.add_argument("--path", default="/")
+    stream_http.add_argument("--timeout", type=float, default=3.0)
+    stream_http.add_argument("--show-headers", action="store_true")
     ws_client = _host_port(client_sub.add_parser("websocket", help="Call WebSocket echo server"), default_port=8765)
     ws_client.add_argument("--message", default="hello websocket")
     https_client = client_sub.add_parser("https", help="Call public or private HTTPS endpoint")
@@ -174,6 +178,18 @@ def _client(args: argparse.Namespace) -> int:
         response = http_request(args.host, args.port, args.path)
         print(f"{response.status_code} {response.reason}")
         print(response.body.decode("utf-8", errors="replace"))
+    elif args.kind == "stream-http":
+        response = stream_http_request(args.host, args.port, args.path, timeout=args.timeout)
+        print(f"status={response.status_code} {response.reason}")
+        print(f"x_trace_id={response.headers.get('x-trace-id', '')}")
+        print(f"first_byte_ms={response.first_byte_ms}")
+        if args.show_headers:
+            for key, value in sorted(response.headers.items()):
+                print(f"header.{key}={value}")
+        for index, chunk in enumerate(response.chunks, start=1):
+            preview = chunk.data[:120].decode("utf-8", errors="replace").replace("\n", "\\n")
+            print(f"chunk={index} elapsed_ms={chunk.elapsed_ms} size={chunk.size} data={preview}")
+        print(f"total_ms={response.total_ms}")
     elif args.kind == "websocket":
         print(websocket_echo_client(args.host, args.port, args.message.encode()).decode("utf-8", errors="replace"))
     elif args.kind == "https":

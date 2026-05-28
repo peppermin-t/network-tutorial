@@ -6,13 +6,13 @@ This is an optional extension lab. It does not build or configure a VPN, does no
 
 ## Before You Run: Concepts
 
-- `VPN tunnel`: selected traffic carried through an encrypted path. See `docs/concepts.md#vpn-tunnel`.
-- `Virtual interface`: software network interface used by VPN clients. See `docs/concepts.md#virtual-interface`.
-- `Route table`: decides which path a destination IP uses. See `docs/concepts.md#route-table`.
-- `Full tunnel`: most traffic goes through VPN. See `docs/concepts.md#full-tunnel`.
-- `Split tunnel`: only selected routes go through VPN. See `docs/concepts.md#split-tunnel`.
-- `DNS policy`: resolver behavior may change with VPN state. See `docs/concepts.md#dns-policy`.
-- `VPN outer traffic vs inner traffic`: physical captures may show encrypted tunnel packets, not inner HTTP. See `docs/concepts.md#vpn-outer-traffic-vs-inner-traffic`.
+- `VPN tunnel`: selected traffic carried through an encrypted path. See `../../docs/concepts.md#vpn-tunnel`.
+- `Virtual interface`: software network interface used by VPN clients. See `../../docs/concepts.md#virtual-interface`.
+- `Route table`: decides which path a destination IP uses. See `../../docs/concepts.md#route-table`.
+- `Full tunnel`: most traffic goes through VPN. See `../../docs/concepts.md#full-tunnel`.
+- `Split tunnel`: only selected routes go through VPN. See `../../docs/concepts.md#split-tunnel`.
+- `DNS policy`: resolver behavior may change with VPN state. See `../../docs/concepts.md#dns-policy`.
+- `VPN outer traffic vs inner traffic`: physical captures may show encrypted tunnel packets, not inner HTTP. See `../../docs/concepts.md#vpn-outer-traffic-vs-inner-traffic`.
 
 ## If You Are Confused
 
